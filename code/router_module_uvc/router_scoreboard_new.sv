@@ -72,9 +72,10 @@ class router_scoreboard_new extends uvm_scoreboard;
         yapp_packet pkt;
         channel_packet cp;
         forever begin
+
         yapp_get.get(pkt);
         received++;
-        if ((!router_en) || (maxpktsize > pkt.length) || (pkt.addr > 2)) begin
+        if (!(!router_en || (maxpktsize > pkt.length) || (pkt.addr > 2))) begin
             `uvm_info(get_type_name(), "PACKET DROPPED", UVM_LOW)
             droppped++;
         end
@@ -93,6 +94,7 @@ class router_scoreboard_new extends uvm_scoreboard;
                 wrong++;
             end
         end
+
         end
     endtask: yapp_pkt_method
 
@@ -233,7 +235,7 @@ class router_scoreboard_new extends uvm_scoreboard;
 
     function void report_phase (uvm_phase phase);
         $display("=======================================================================================================================================================================");
-        $display("                                                            SCOREBOARD REPORT                                                                           ");
+        $display("                                                            SCOREBOARD REPORT                                                                                          ");
         $display("=======================================================================================================================================================================");
         `uvm_info(get_type_name(), $sformatf("Total Packets Received\t:   %0d", received), UVM_LOW)
         `uvm_info(get_type_name(), $sformatf("Total Packets Matched\t:   %0d", matched), UVM_LOW)
