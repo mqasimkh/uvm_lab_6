@@ -10,7 +10,6 @@
 -incdir ../sv
 -incdir ../../router_rtl
 
-
 ../../yapp/sv/yapp_if.sv
 ../../yapp/sv/yapp_pkg.sv
 

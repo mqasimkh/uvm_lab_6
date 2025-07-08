@@ -1,5 +1,5 @@
 #!/bin/csh
 
-source ~/cshrc
+source ~/USER/cshrc
 
 xrun -access +rwc -uvm -f file.f +SVSEED=random #-gui
