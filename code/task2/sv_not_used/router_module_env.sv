@@ -1,8 +1,8 @@
 class router_module_env extends uvm_env;
     `uvm_component_utils(router_module_env)
 
-    // router_reference reference_model;
-    router_scoreboard_new scoreboard;
+    router_reference reference_model;
+    router_scoreboard scoreboard;
 
     uvm_analysis_export #(yapp_packet) ref_model_yapp;
     uvm_analysis_export #(hbus_transaction) ref_model_hbus;
@@ -27,23 +27,20 @@ class router_module_env extends uvm_env;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
 
-        // reference_model = router_reference::type_id::create("router_reference", this);
-        scoreboard = router_scoreboard_new::type_id::create("router_scoreboard_new", this);
+        reference_model = router_reference::type_id::create("router_reference", this);
+        scoreboard = router_scoreboard::type_id::create("router_scoreboard", this);
 
     endfunction: build_phase
 
     function void connect_phase(uvm_phase phase);
-        // reference_model.yapp_valid.connect(scoreboard.yapp_in);
-        
-        // ref_model_yapp.connect(reference_model.yapp_in);
-        // ref_model_hbus.connect(reference_model.hbus_in);
+        reference_model.yapp_valid.connect(scoreboard.yapp_in);
 
-        ref_model_yapp.connect(scoreboard.yapp_fifo.analysis_export);
-        ref_model_hbus.connect(scoreboard.hbus_fifo.analysis_export);
+        ref_model_yapp.connect(reference_model.yapp_in);
+        ref_model_hbus.connect(reference_model.hbus_in);
 
-        scr_chan0.connect(scoreboard.chann0_fifo.analysis_export);
-        scr_chan1.connect(scoreboard.chann1_fifo.analysis_export);
-        scr_chan2.connect(scoreboard.chann2_fifo.analysis_export);
+        scr_chan0.connect(scoreboard.chann0_in);
+        scr_chan1.connect(scoreboard.chann1_in);
+        scr_chan2.connect(scoreboard.chann2_in);
 
     endfunction: connect_phase
 
