@@ -97,7 +97,7 @@ class multi_channel extends base_test;
 
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        set_type_override_by_type(yapp_packet::get_type(), short_yapp_packet::get_type());
+        //set_type_override_by_type(yapp_packet::get_type(), short_yapp_packet::get_type());
         uvm_config_wrapper::set(this, "tb.c?.rx_agent.sequencer.run_phase", "default_sequence", channel_rx_resp_seq::get_type());
         uvm_config_wrapper::set(this, "tb.clk_rst.agent.sequencer.run_phase", "default_sequence", clk10_rst5_seq::get_type());
         uvm_config_wrapper::set(this, "tb.mcseq.run_phase", "default_sequence", router_mcseqs::get_type());

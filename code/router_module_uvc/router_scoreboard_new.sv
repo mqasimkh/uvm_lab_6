@@ -16,10 +16,11 @@ class router_scoreboard_new extends uvm_scoreboard;
     int received = 0;
     int matched = 0;
     int wrong = 0;
-    int maxpktsize;
-    int router_en;
+    int maxpktsize=63;
+    int router_en=1;
 
     int droppped;
+    int not_droppped;
 
     function new (string name = "router_scoreboard_new", uvm_component parent);
         super.new(name, parent);
@@ -75,16 +76,24 @@ class router_scoreboard_new extends uvm_scoreboard;
 
         yapp_get.get(pkt);
         received++;
-        if (!(!router_en || (maxpktsize > pkt.length) || (pkt.addr > 2))) begin
+        // if (!(!router_en || (maxpktsize > pkt.length) || (pkt.addr > 2))) begin
+
+        if ((!router_en)|| (pkt.length > maxpktsize) || (pkt.addr > 2 ) ) begin
             `uvm_info(get_type_name(), "PACKET DROPPED", UVM_LOW)
             droppped++;
         end
         else begin
+           
+            
             case(pkt.addr)
+
                 2'b00: chann0_get.get(cp);
                 2'b01: chann1_get.get(cp);
                 2'b10: chann2_get.get(cp);
+     
             endcase
+
+           not_droppped++;
             if (custom_comp(pkt, cp)) begin
                 `uvm_info(get_type_name(), "PACKET MATCHED", UVM_LOW)
                 matched++;
@@ -218,7 +227,7 @@ class router_scoreboard_new extends uvm_scoreboard;
     function bit custom_comp (yapp_packet yp, channel_packet cp, uvm_comparer comparer = null);
         if (comparer == null)
             comparer = new();
-        
+         
         custom_comp = comparer.compare_field("addr", yp.addr, cp.addr, 2);
         custom_comp &= comparer.compare_field("length", yp.length, cp.length, 6);
         custom_comp &= comparer.compare_field("parity", yp.parity, cp.parity, 8);
@@ -238,10 +247,16 @@ class router_scoreboard_new extends uvm_scoreboard;
         $display("                                                            SCOREBOARD REPORT                                                                                          ");
         $display("=======================================================================================================================================================================");
         `uvm_info(get_type_name(), $sformatf("Total Packets Received\t:   %0d", received), UVM_LOW)
-        `uvm_info(get_type_name(), $sformatf("Total Packets Matched\t:   %0d", matched), UVM_LOW)
-        `uvm_info(get_type_name(), $sformatf("Total Packets Mis-Matched\t:   %0d", wrong), UVM_LOW)
+        `uvm_info(get_type_name(), $sformatf("Packets Matched\t:   %0d", matched), UVM_LOW)
+        `uvm_info(get_type_name(), $sformatf("Packets Mis-Matched\t:   %0d", wrong), UVM_LOW)
         `uvm_info(get_type_name(), $sformatf("Packets Dropped\t:   %0d", droppped), UVM_LOW)
-        $display("------------------------------------------------------------------------------------------------------------------------------------------------");
+        `uvm_info(get_type_name(), $sformatf("Packets Not Dropped\t:   %0d", not_droppped), UVM_LOW)
+        `uvm_info(get_type_name(), $sformatf("Queue Yapp FIFO\t:   %0d", yapp_fifo.size()), UVM_LOW)
+        `uvm_info(get_type_name(), $sformatf("Queue Chan 0\t:   %0d", chann0_fifo.size()), UVM_LOW)
+        `uvm_info(get_type_name(), $sformatf("Queue Chan 1\t:   %0d", chann1_fifo.size()), UVM_LOW)
+        `uvm_info(get_type_name(), $sformatf("Queue Chan 2\t:   %0d", chann2_fifo.size()), UVM_LOW)
+        `uvm_info(get_type_name(), $sformatf("Queue HBUS\t:   %0d", hbus_fifo.size()), UVM_LOW)     
+        $display("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------");
     endfunction: report_phase
 
 endclass: router_scoreboard_new
