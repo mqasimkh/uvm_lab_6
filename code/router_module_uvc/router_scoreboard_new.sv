@@ -39,7 +39,6 @@ class router_scoreboard_new extends uvm_scoreboard;
 
     endfunction: new
 
-
 //-----------------------------------------------------------------------------------------------------
 //                                      connect_phase
 //-----------------------------------------------------------------------------------------------------
@@ -77,23 +76,17 @@ class router_scoreboard_new extends uvm_scoreboard;
         yapp_get.get(pkt);
         received++;
         // if (!(!router_en || (maxpktsize > pkt.length) || (pkt.addr > 2))) begin
-
         if ((!router_en)|| (pkt.length > maxpktsize) || (pkt.addr > 2 ) ) begin
             `uvm_info(get_type_name(), "PACKET DROPPED", UVM_LOW)
             droppped++;
         end
         else begin
-           
-            
             case(pkt.addr)
-
                 2'b00: chann0_get.get(cp);
                 2'b01: chann1_get.get(cp);
                 2'b10: chann2_get.get(cp);
-     
             endcase
-
-           not_droppped++;
+            not_droppped++;
             if (custom_comp(pkt, cp)) begin
                 `uvm_info(get_type_name(), "PACKET MATCHED", UVM_LOW)
                 matched++;
@@ -103,7 +96,6 @@ class router_scoreboard_new extends uvm_scoreboard;
                 wrong++;
             end
         end
-
         end
     endtask: yapp_pkt_method
 
@@ -121,104 +113,6 @@ class router_scoreboard_new extends uvm_scoreboard;
             maxpktsize = hbus_pkt.hdata;
         end
     endtask: hbus_f
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////                 write yapp method                   ////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // function void write_yapp (input yapp_packet packet);
-    //     yapp_packet yp;
-    //     $cast(yp, packet.clone());
-    //     case(yp.addr)
-    //         2'b00: q0.push_back(yp);
-    //         2'b01: q1.push_back(yp);
-    //         2'b10: q2.push_back(yp);
-    //     endcase
-    // endfunction: write_yapp
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////                write channel methods                ////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // function void write_chann0(input channel_packet packet);
-    //     yapp_packet yp;
-    //     yp = q0.pop_front();
-    //     received++;
-    //     //if (comp_equal(yp, packet)) begin
-    //     if (custom_comp(yp, packet)) begin
-    //         `uvm_info("MATCHED", "PACKET is MATCHED at Channel 0", UVM_LOW)
-    //         matched++;
-    //     end
-    //     else begin
-    //         `uvm_info("WRONG", "PACKET is NOT MATCHED", UVM_LOW)
-    //         wrong++;
-    //     end
-    // endfunction: write_chann0
-
-    // function void write_chann1(input channel_packet packet);
-    //     yapp_packet yp;
-    //     yp = q1.pop_front();
-    //     received++;
-    //     //if (comp_equal(yp, packet)) begin
-    //     if (custom_comp(yp, packet)) begin
-    //         `uvm_info("MATCHED", "PACKET is MATCHED at Channel 1", UVM_LOW)
-    //         matched++;
-    //     end
-    //     else begin
-    //         `uvm_info("WRONG", "PACKET is NOT MATCHED", UVM_LOW)
-    //         wrong++;
-    //     end
-    // endfunction: write_chann1
-
-    // function void write_chann2(input channel_packet packet);
-    //     yapp_packet yp;
-    //     yp = q2.pop_front();
-    //     received++;
-    //     //if (comp_equal(yp, packet)) begin
-    //     if (custom_comp(yp, packet)) begin
-    //         `uvm_info("MATCHED", "PACKET is MATCHED at Channel 2", UVM_LOW)
-    //         matched++;
-    //     end
-    //     else begin
-    //         `uvm_info("WRONG", "PACKET is NOT MATCHED", UVM_LOW)
-    //         wrong++;
-    //     end
-    // endfunction: write_chann2
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////                comp_equal function                  ////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // function bit comp_equal (input yapp_packet yp, input channel_packet cp);
-    // // returns first mismatch only
-    // if (yp.addr != cp.addr) begin
-    //     `uvm_error("PKT_COMPARE",$sformatf("Address mismatch YAPP %0d Chan %0d",yp.addr,cp.addr))
-    //     return(0);
-    // end
-
-    // if (yp.length != cp.length) begin
-    //     `uvm_error("PKT_COMPARE",$sformatf("Length mismatch YAPP %0d Chan %0d",yp.length,cp.length))
-    //     return(0);
-    // end
-
-    // foreach (yp.payload [i])
-
-    // if (yp.payload[i] != cp.payload[i]) begin
-    //     `uvm_error("PKT_COMPARE",$sformatf("Payload[%0d] mismatch YAPP %0d Chan %0d",i,yp.payload[i],cp.payload[i]))
-    //     return(0);
-    // end
-
-    // if (yp.parity != cp.parity) begin
-    //     `uvm_error("PKT_COMPARE",$sformatf("Parity mismatch YAPP %0d Chan %0d",yp.parity,cp.parity))
-    //     return(0);
-    // end
-
-    // return(1);
-
-    // endfunction: comp_equal
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////                  custom_comp method                 ////////////////////////
@@ -251,11 +145,11 @@ class router_scoreboard_new extends uvm_scoreboard;
         `uvm_info(get_type_name(), $sformatf("Packets Mis-Matched\t:   %0d", wrong), UVM_LOW)
         `uvm_info(get_type_name(), $sformatf("Packets Dropped\t:   %0d", droppped), UVM_LOW)
         `uvm_info(get_type_name(), $sformatf("Packets Not Dropped\t:   %0d", not_droppped), UVM_LOW)
-        `uvm_info(get_type_name(), $sformatf("Queue Yapp FIFO\t:   %0d", yapp_fifo.size()), UVM_LOW)
-        `uvm_info(get_type_name(), $sformatf("Queue Chan 0\t:   %0d", chann0_fifo.size()), UVM_LOW)
-        `uvm_info(get_type_name(), $sformatf("Queue Chan 1\t:   %0d", chann1_fifo.size()), UVM_LOW)
-        `uvm_info(get_type_name(), $sformatf("Queue Chan 2\t:   %0d", chann2_fifo.size()), UVM_LOW)
-        `uvm_info(get_type_name(), $sformatf("Queue HBUS\t:   %0d", hbus_fifo.size()), UVM_LOW)     
+        `uvm_info(get_type_name(), $sformatf("FIFO Yapp\t:   %0d", yapp_fifo.size()), UVM_LOW)
+        `uvm_info(get_type_name(), $sformatf("FIFO Chan 0\t:   %0d", chann0_fifo.size()), UVM_LOW)
+        `uvm_info(get_type_name(), $sformatf("FIFO Chan 1\t:   %0d", chann1_fifo.size()), UVM_LOW)
+        `uvm_info(get_type_name(), $sformatf("FIFO Chan 2\t:   %0d", chann2_fifo.size()), UVM_LOW)
+        `uvm_info(get_type_name(), $sformatf("FIFO HBUS\t:   %0d", hbus_fifo.size()), UVM_LOW)     
         $display("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------");
     endfunction: report_phase
 
