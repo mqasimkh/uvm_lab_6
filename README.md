@@ -67,7 +67,7 @@ Ran the same test as in `task 3` of last lab with `short packet` and same result
 
 ## Task 2: Using TLM Analysis FIFOs
 
-Instead of using `reference model`, create a 
+Instead of using `reference model`, created a new scoreboard and used `TLM analysis FIFOs` and declared methods to pass check the compare the correct packets only.
 
 ### router_scoreboard_new.sv
 
