@@ -4,8 +4,6 @@ In this lab, need to modify `module UVC` created in last lab to use `TLM exports
 
 ## Table of Contents
 
-## Table of Contents
-
 - [UVM Lab # 6: TLM Connection](#uvm-lab--6-tlm-connection)
   - [Task 1: Using TLM Export Connectors](#task-1-using-tlm-export-connectors)
     - [Changes in `router_module_env` & `router_tb`](#changes-in-router_module_env--router_tb)
